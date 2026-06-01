@@ -1,0 +1,174 @@
+/* =========================================================================
+ * style.css — 메인(블로그 목록)  ·  하늘색 테마 / Pretendard / 반투명
+ * ========================================================================= */
+
+:root {
+  --sky:        #5ba3da;   /* 메인 하늘색 강조 */
+  --sky-deep:   #3b7fb8;   /* 진한 하늘색(제목 강조) */
+  --sky-soft:   #bcdcf3;
+  --text:       #2c3a47;
+  --muted:      #7c93a6;
+  --panel-bg:   rgba(255, 255, 255, 0.42);
+  --panel-bd:   rgba(255, 255, 255, 0.7);
+  --line:       rgba(91, 163, 218, 0.30);
+}
+
+* { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; min-height: 100%; }
+
+body {
+  color: var(--text);
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+
+  /* 하늘색 그라데이션 배경 (패널이 반투명하게 비침) */
+  background: linear-gradient(160deg, #d9ecfb 0%, #e7e3f6 48%, #cfe7fb 100%) fixed;
+  background-color: #dceafa;
+
+  /* 복사 방지: 텍스트 선택 비활성화 */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+a { color: var(--sky-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---- 반투명 패널 ---- */
+.panel {
+  max-width: 760px;
+  margin: 48px auto;
+  padding: 8px 30px 24px;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-bd);
+  border-radius: 18px;
+  box-shadow: 0 8px 40px rgba(70, 110, 150, 0.16);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+@media (max-width: 600px) {
+  .panel { margin: 0; border-radius: 0; min-height: 100vh; padding: 8px 18px 24px; }
+}
+
+/* ---- 헤더: 제목 / 점선 구분선 / 내용 ---- */
+.site-header {
+  text-align: center;
+  padding: 44px 10px 8px;
+}
+.site-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #243441;
+}
+
+/* 점선 구분선 (제목 ──── 내용) */
+.divider {
+  width: 100%;
+  max-width: 420px;
+  height: 0;
+  margin: 18px auto;
+  border-top: 1px dashed var(--sky);
+  position: relative;
+}
+.divider::after {
+  content: "";
+  position: absolute;
+  top: -4px; left: 50%;
+  width: 7px; height: 7px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--sky);
+}
+
+.site-header .desc {
+  color: var(--text);
+  opacity: 0.85;
+  font-size: 1rem;
+  max-width: 540px;
+  margin: 0 auto;
+  white-space: pre-line;
+}
+.site-header .author {
+  color: var(--muted);
+  font-size: 0.88rem;
+  margin: 14px 0 0;
+}
+
+/* ---- 화 목록: 얇은 줄로 구분된 행 (날짜·사진 없음) ---- */
+.chapter-list {
+  list-style: none;
+  padding: 0;
+  margin: 30px 0 10px;
+  border-top: 1px solid var(--line);
+}
+.chapter-list li { margin: 0; }
+
+.chapter-row {
+  display: block;
+  padding: 18px 6px;
+  border-bottom: 1px solid var(--line);
+  color: inherit;
+  transition: background 0.15s ease, padding-left 0.15s ease;
+}
+.chapter-row:hover {
+  background: rgba(255, 255, 255, 0.5);
+  padding-left: 14px;
+  text-decoration: none;
+}
+.chapter-row .row-label {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--sky);
+  margin-bottom: 4px;
+  letter-spacing: 0.02em;
+}
+.chapter-row .row-title {
+  display: block;
+  font-size: 1.16rem;
+  font-weight: 700;
+  color: var(--sky-deep);
+  margin-bottom: 4px;
+}
+.chapter-row .row-summary {
+  display: block;
+  font-size: 0.94rem;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty, .loading {
+  text-align: center;
+  color: var(--muted);
+  padding: 50px 0;
+  list-style: none;
+}
+
+.site-footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.82rem;
+  padding: 28px 10px 8px;
+  margin-top: 18px;
+}
+.site-footer a { color: var(--sky-deep); }
+
+/* ---- 인쇄 차단 ---- */
+@media print {
+  body * { display: none !important; }
+  body::after {
+    content: "인쇄가 허용되지 않는 페이지입니다.";
+    display: block !important;
+    text-align: center;
+    margin-top: 40px;
+    font-size: 18px;
+  }
+}

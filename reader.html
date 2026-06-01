@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>읽기</title>
+  <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="assets/css/reader.css">
+</head>
+<body data-theme="light" data-mode="paginated">
+
+  <!-- 상단 바 -->
+  <div class="reader-topbar" id="topbar">
+    <a class="home-link" href="index.html">← 목록</a>
+    <div class="ch-name" id="ch-name">읽는 중…</div>
+    <div class="toolbar-btns">
+      <button class="icon-btn" id="btn-mode" title="읽기 모드 전환">⇅</button>
+      <button class="icon-btn" id="btn-settings" title="설정">Aa</button>
+    </div>
+  </div>
+
+  <!-- 설정 패널 -->
+  <div class="settings-panel" id="settings-panel">
+    <div class="settings-row">
+      <div class="label">읽기 모드</div>
+      <div class="seg" id="seg-mode">
+        <button data-mode="paginated">페이지 넘김</button>
+        <button data-mode="scroll">세로 스크롤</button>
+      </div>
+    </div>
+    <div class="settings-row">
+      <div class="label">글자 크기</div>
+      <div class="seg" id="seg-font">
+        <button data-font="-">가−</button>
+        <button data-font="reset">기본</button>
+        <button data-font="+">가＋</button>
+      </div>
+    </div>
+    <div class="settings-row">
+      <div class="label">테마</div>
+      <div class="seg" id="seg-theme">
+        <button class="theme-swatch t-light" data-theme="light">밝게</button>
+        <button class="theme-swatch t-sepia" data-theme="sepia">세피아</button>
+        <button class="theme-swatch t-dark" data-theme="dark">어둡게</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 페이지 넘김 클릭 영역 -->
+  <div class="page-edge left" id="edge-left"></div>
+  <div class="page-edge right" id="edge-right"></div>
+
+  <!-- 본문 무대 -->
+  <div class="reader-stage" id="stage">
+    <div class="reader-content" id="content"></div>
+  </div>
+
+  <div class="progress-bar" id="progress"></div>
+
+  <!-- 하단 바 -->
+  <div class="reader-bottombar">
+    <button class="nav-btn" id="prev-ch">‹ 이전화</button>
+    <span class="page-indicator" id="page-indicator"></span>
+    <button class="nav-btn" id="next-ch">다음화 ›</button>
+  </div>
+
+  <div class="reader-loading" id="reader-loading">불러오는 중…</div>
+
+  <script src="assets/js/protect.js"></script>
+  <script src="assets/js/reader.js"></script>
+</body>
+</html>

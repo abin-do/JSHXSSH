@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>화 작성 도구</title>
+  <style>
+    :root{
+      --bg:#f6f5f1; --surface:#fff; --text:#2a2622; --muted:#8a847c;
+      --accent:#7a5c3e; --border:#e6e2da;
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif;
+      line-height:1.5;
+    }
+    .wrap{max-width:1180px; margin:0 auto; padding:24px 20px 80px;}
+    header.top{display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;}
+    header.top h1{font-size:1.4rem; margin:0;}
+    header.top a{color:var(--accent); text-decoration:none; font-size:.9rem;}
+
+    .grid{display:grid; grid-template-columns:1.15fr .85fr; gap:20px; align-items:start;}
+    @media (max-width:920px){ .grid{grid-template-columns:1fr;} }
+
+    .card{background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px;}
+    .card+.card{margin-top:16px;}
+    .card h2{font-size:.95rem; margin:0 0 12px; color:var(--muted); letter-spacing:.02em;}
+
+    /* 오른쪽 패널은 스크롤해도 따라오도록 고정감 */
+    .right-col{position:sticky; top:16px;}
+
+    label.field{display:block; margin-bottom:12px; font-size:.85rem; color:var(--muted);}
+    label.field input{
+      display:block; width:100%; margin-top:5px; padding:9px 11px;
+      border:1px solid var(--border); border-radius:8px; font-size:.95rem; color:var(--text); background:#fff;
+    }
+    .row3{display:grid; grid-template-columns:1fr 1fr 1.4fr; gap:10px;}
+    @media (max-width:600px){ .row3{grid-template-columns:1fr;} }
+
+    /* 툴바 */
+    .toolbar{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; align-items:center;}
+    .toolbar button{
+      border:1px solid var(--border); background:#fff; color:var(--text);
+      border-radius:7px; padding:7px 11px; cursor:pointer; font-size:.85rem; line-height:1;
+    }
+    .toolbar button:hover{background:#f0ede7;}
+    .toolbar .sep{width:1px; align-self:stretch; background:var(--border); margin:2px 4px;}
+    .color-tool{display:inline-flex; align-items:center; border:1px solid var(--border); border-radius:7px; overflow:hidden;}
+    .color-tool input[type=color]{width:30px; height:32px; border:none; padding:2px; background:#fff; cursor:pointer;}
+    .color-tool button{border:none; border-left:1px solid var(--border); border-radius:0;}
+
+    /* WYSIWYG 편집 영역 — 블로그/소설 본문 느낌 */
+    .editor-wysiwyg{
+      min-height:460px; max-height:70vh; overflow:auto;
+      border:1px solid var(--border); border-radius:10px; padding:26px 30px;
+      background:#fff; outline:none;
+      font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
+      font-size:1.08rem; line-height:1.95; color:#23201c;
+    }
+    .editor-wysiwyg:focus{border-color:var(--accent);}
+    .editor-wysiwyg p{margin:0 0 1.05em; text-indent:1em; word-break:keep-all;}
+    .editor-wysiwyg h2{text-align:center; font-size:1.3em; margin:.4em 0 1em; text-indent:0; font-weight:700;}
+    .editor-wysiwyg hr{border:none; text-align:center; margin:1.6em 0;}
+    .editor-wysiwyg hr::before{content:"···"; letter-spacing:.5em; opacity:.5;}
+    .editor-wysiwyg em{font-style:italic;}
+    .editor-wysiwyg:empty::before{content:"여기에 본문을 쓰세요. 엔터로 문단을 나누고, 위 버튼으로 꾸미면 됩니다."; color:#b8b2a8;}
+
+    .hint{font-size:.78rem; color:var(--muted); margin-top:10px; line-height:1.6;}
+    .hint code{background:#efece5; padding:1px 5px; border-radius:4px;}
+
+    /* 불러오기 영역 */
+    .import-box{margin-top:12px; display:none;}
+    .import-box.open{display:block;}
+    .import-box textarea{
+      width:100%; min-height:120px; padding:10px; border:1px solid var(--border); border-radius:8px;
+      font-family:"Consolas",ui-monospace,monospace; font-size:.82rem; color:var(--text);
+    }
+
+    .out-actions{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 12px;}
+    .btn{border:none; border-radius:8px; padding:10px 16px; cursor:pointer; font-size:.9rem; font-weight:600;}
+    .btn.primary{background:var(--accent); color:#fff;}
+    .btn.ghost{background:#fff; color:var(--text); border:1px solid var(--border);}
+    .btn.small{padding:7px 12px; font-size:.82rem; font-weight:500;}
+    .btn:active{transform:translateY(1px);}
+
+    pre.code-out{
+      background:#23201c; color:#e8e3da; border-radius:8px; padding:14px; overflow:auto;
+      font-size:.82rem; line-height:1.5; max-height:300px; white-space:pre-wrap; word-break:break-all;
+      font-family:"Consolas",ui-monospace,monospace; margin:0;
+    }
+    .toast{
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+      background:#23201c; color:#fff; padding:10px 18px; border-radius:20px; font-size:.88rem;
+      opacity:0; pointer-events:none; transition:opacity .2s; z-index:100;
+    }
+    .toast.show{opacity:1;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <h1>📝 화 작성 도구</h1>
+      <a href="index.html">← 메인으로</a>
+    </header>
+
+    <div class="grid">
+      <!-- 왼쪽: 작성 -->
+      <div>
+        <div class="card">
+          <h2>화 정보</h2>
+          <div class="row3">
+            <label class="field">번호 (id)
+              <input type="text" id="f-id" placeholder="003" value="003">
+            </label>
+            <label class="field">날짜
+              <input type="text" id="f-date" placeholder="2026-06-10">
+            </label>
+            <label class="field">제목
+              <input type="text" id="f-title" placeholder="3화. 새로운 시작">
+            </label>
+          </div>
+          <label class="field">한 줄 소개 (목록에 표시 · 생략 가능)
+            <input type="text" id="f-summary" placeholder="이번 화의 짧은 소개">
+          </label>
+        </div>
+
+        <div class="card">
+          <h2>본문 작성</h2>
+          <div class="toolbar" id="toolbar">
+            <button data-cmd="h2" title="소제목">소제목</button>
+            <button data-cmd="p" title="일반 문단">문단</button>
+            <button data-cmd="hr" title="장면 전환선">─ 장면전환</button>
+            <span class="sep"></span>
+            <button data-cmd="bold" title="굵게" style="font-weight:700;">B</button>
+            <button data-cmd="italic" title="기울임" style="font-style:italic;">I</button>
+            <span class="color-tool">
+              <input type="color" id="color-pick" value="#c0392b" title="글자 색 선택">
+              <button data-cmd="color">🎨 글자색</button>
+            </span>
+            <button data-cmd="clear" title="서식 지우기">서식해제</button>
+            <span class="sep"></span>
+            <button id="btn-import-toggle" type="button" title="기존 HTML 불러오기">📥 불러오기</button>
+          </div>
+
+          <div id="editor" class="editor-wysiwyg" contenteditable="true"></div>
+
+          <div class="import-box" id="import-box">
+            <p class="hint" style="margin:10px 0 6px;">기존 화의 HTML(예: <code>chapters/001.html</code> 내용)을 붙여넣고 불러오면 이어서 편집할 수 있습니다.</p>
+            <textarea id="import-text" placeholder="<p>...</p> 형태의 HTML을 여기에 붙여넣으세요"></textarea>
+            <div style="margin-top:8px; display:flex; gap:8px;">
+              <button class="btn primary small" id="btn-import-load">불러오기</button>
+              <button class="btn ghost small" id="btn-import-cancel">닫기</button>
+            </div>
+          </div>
+
+          <div class="hint">
+            엔터로 문단 구분 · 글자를 드래그한 뒤 <b>B / I / 🎨</b> 로 꾸밉니다 · 붙여넣기는 자동으로 깔끔한 문단으로 정리됩니다.
+          </div>
+        </div>
+      </div>
+
+      <!-- 오른쪽: HTML 출력 + 내보내기 -->
+      <div class="right-col">
+        <div class="card">
+          <h2>본문 HTML (실시간)</h2>
+          <div class="out-actions">
+            <button class="btn primary" id="btn-download">⬇ HTML 파일 다운로드</button>
+            <button class="btn ghost" id="btn-copy-html">HTML 복사</button>
+          </div>
+          <pre class="code-out" id="code-out"></pre>
+        </div>
+
+        <div class="card">
+          <h2>chapters.json 에 추가할 항목</h2>
+          <p class="hint" style="margin:0 0 8px;">
+            <code>chapters/chapters.json</code> 의 <code>chapters</code> 배열에 추가하세요. (앞 항목 뒤에 <code>,</code> 잊지 마세요)
+          </p>
+          <pre class="code-out" id="json-out"></pre>
+          <button class="btn ghost small" id="btn-copy-json" style="margin-top:10px;">JSON 항목 복사</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="assets/js/editor.js"></script>
+</body>
+</html>
