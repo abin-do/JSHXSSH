@@ -5,10 +5,10 @@
  * ========================================================================= */
 
 :root {
-  --reader-font-size: 1.12rem;
+  --reader-font-size: 1.1rem;
   --reader-line-height: 1.9;
   --reader-width: 42rem;
-  --ui-accent: #7a5c3e;
+  --ui-accent: #5ba3da;
 }
 
 * { box-sizing: border-box; }
@@ -21,8 +21,8 @@ html, body {
 }
 
 body {
-  font-family: "Noto Serif KR", "Nanum Myeongjo", Georgia, "Apple SD Gothic Neo",
-    "Malgun Gothic", serif;
+  font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
   -webkit-font-smoothing: antialiased;
 
   /* 복사 방지 */
@@ -35,9 +35,9 @@ body {
 }
 
 /* ---- 테마 ---- */
-body[data-theme="light"] { background: #ffffff; color: #23201c; --ui-accent:#7a5c3e; }
-body[data-theme="sepia"] { background: #f4ecd8; color: #4a3f2e; --ui-accent:#8a6a3e; }
-body[data-theme="dark"]  { background: #16140f; color: #cfc8bc; --ui-accent:#c9a87e; }
+body[data-theme="light"] { background: #f7fbff; color: #2c3a47; --ui-accent:#5ba3da; }
+body[data-theme="sepia"] { background: #f4ecd8; color: #4a3f2e; --ui-accent:#caa05a; }
+body[data-theme="dark"]  { background: #14181d; color: #c5d2dd; --ui-accent:#6fb3e0; }
 
 /* =========================================================================
  * 상단 바
@@ -165,9 +165,36 @@ body[data-theme="dark"]  { background: #16140f; color: #cfc8bc; --ui-accent:#c9a
   transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
+/* 화 머리말: 제목 / 점선 구분선 / 내용 */
+.chapter-head {
+  text-align: center;
+  margin: 0.2em 0 1.8em;
+}
+.chapter-head h1 {
+  font-size: 1.5em;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.chapter-head .rule {
+  width: 100%;
+  max-width: 320px;
+  margin: 16px auto 0;
+  border-top: 1px dashed var(--ui-accent);
+  position: relative;
+}
+.chapter-head .rule::after {
+  content: "";
+  position: absolute;
+  top: -4px; left: 50%;
+  width: 7px; height: 7px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--ui-accent);
+}
+
 /* 본문 타이포 */
 .reader-content h2 {
-  font-size: 1.35em;
+  font-size: 1.3em;
   margin: 0.2em 0 1em;
   text-align: center;
   font-weight: 700;

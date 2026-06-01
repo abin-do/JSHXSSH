@@ -4,15 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>화 작성 도구</title>
+  <link rel="stylesheet" as="style" crossorigin
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
   <style>
     :root{
-      --bg:#f6f5f1; --surface:#fff; --text:#2a2622; --muted:#8a847c;
-      --accent:#7a5c3e; --border:#e6e2da;
+      --bg:#dceafa; --surface:rgba(255,255,255,0.66); --text:#2c3a47; --muted:#7c93a6;
+      --accent:#5ba3da; --border:rgba(91,163,218,0.28);
     }
     *{box-sizing:border-box;}
     body{
-      margin:0; background:var(--bg); color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif;
+      margin:0; color:var(--text);
+      background:linear-gradient(160deg,#d9ecfb 0%,#e7e3f6 48%,#cfe7fb 100%) fixed;
+      font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR","Malgun Gothic",sans-serif;
       line-height:1.5;
     }
     .wrap{max-width:1180px; margin:0 auto; padding:24px 20px 80px;}
@@ -55,8 +58,8 @@
       min-height:460px; max-height:70vh; overflow:auto;
       border:1px solid var(--border); border-radius:10px; padding:26px 30px;
       background:#fff; outline:none;
-      font-family:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
-      font-size:1.08rem; line-height:1.95; color:#23201c;
+      font-family:"Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      font-size:1.06rem; line-height:1.9; color:#23201c;
     }
     .editor-wysiwyg:focus{border-color:var(--accent);}
     .editor-wysiwyg p{margin:0 0 1.05em; text-indent:1em; word-break:keep-all;}

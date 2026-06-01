@@ -9,6 +9,9 @@
   'use strict';
 
   var $ = function (id) { return document.getElementById(id); };
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
 
   var els = {
     body: document.body,
@@ -94,8 +97,12 @@
     return fetch('chapters/' + ch.id + '.html', { cache: 'no-cache' })
       .then(function (r) { if (!r.ok) throw new Error(ch.id + '.html 없음'); return r.text(); })
       .then(function (html) {
-        els.content.innerHTML = html;
-        els.chName.textContent = ch.title || ('제 ' + ch.id + ' 화');
+        var heading = ch.title || ('제 ' + ch.id + ' 화');
+        // 화 머리말(제목 / 점선 / 내용) + 본문
+        var head = '<header class="chapter-head"><h1>' +
+          esc(heading) + '</h1><div class="rule"></div></header>';
+        els.content.innerHTML = head + html;
+        els.chName.textContent = heading;
         document.title = ch.title || '읽기';
         state.page = 0;
         // URL 갱신(뒤로가기 자연스럽게)
