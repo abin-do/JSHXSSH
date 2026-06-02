@@ -50,7 +50,8 @@
     set fontFace(v) { localStorage.setItem('reader.fontface', v); }
   };
 
-  var BASE_FONT = 1.12; // rem (reader.css 의 --reader-font-size 기본값과 일치)
+  var BASE_FONT = 0.896; // rem — 기존 1.12에서 '가−' 두 번(×0.8) 줄인 크기를 기본으로
+
 
   function applyPrefs() {
     els.body.setAttribute('data-mode', PREF.mode);

@@ -6,7 +6,7 @@
 @import url('//fonts.googleapis.com/earlyaccess/nanummyeongjo.css'); /* 명조 글꼴 */
 
 :root {
-  --reader-font-size: 1.1rem;
+  --reader-font-size: 0.896rem;
   --reader-line-height: 1.9;
   --reader-width: 42rem;
   --ui-accent: #5ba3da;
