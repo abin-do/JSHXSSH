@@ -45,7 +45,9 @@
     get theme() { return localStorage.getItem('reader.theme') || 'light'; },
     set theme(v) { localStorage.setItem('reader.theme', v); },
     get fontScale() { return parseFloat(localStorage.getItem('reader.font') || '1'); },
-    set fontScale(v) { localStorage.setItem('reader.font', String(v)); }
+    set fontScale(v) { localStorage.setItem('reader.font', String(v)); },
+    get fontFace() { return localStorage.getItem('reader.fontface') || 'sans'; },
+    set fontFace(v) { localStorage.setItem('reader.fontface', v); }
   };
 
   var BASE_FONT = 1.12; // rem (reader.css 의 --reader-font-size 기본값과 일치)
@@ -53,6 +55,7 @@
   function applyPrefs() {
     els.body.setAttribute('data-mode', PREF.mode);
     els.body.setAttribute('data-theme', PREF.theme);
+    els.body.setAttribute('data-fontface', PREF.fontFace);
     document.documentElement.style.setProperty(
       '--reader-font-size', (BASE_FONT * PREF.fontScale).toFixed(3) + 'rem');
     syncSettingButtons();
@@ -65,6 +68,9 @@
     document.querySelectorAll('#seg-theme button').forEach(function (b) {
       b.classList.toggle('active', b.dataset.theme === PREF.theme);
     });
+    document.querySelectorAll('#seg-fontface button').forEach(function (b) {
+      b.classList.toggle('active', b.dataset.fontface === PREF.fontFace);
+    });
   }
 
   /* ---------------- URL 파라미터 ---------------- */
@@ -74,6 +80,11 @@
 
   /* ---------------- 초기 로드 ---------------- */
   applyPrefs();
+
+  // 웹폰트(본명조 등)가 늦게 로드되면 글자 폭이 바뀌므로 로드 완료 후 재계산
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { requestAnimationFrame(relayout); });
+  }
 
   fetch('chapters/chapters.json', { cache: 'no-cache' })
     .then(function (r) { if (!r.ok) throw new Error('목차 로드 실패'); return r.json(); })
@@ -133,21 +144,36 @@
   /* ---------------- 페이지 레이아웃(다단 컬럼) 계산 ---------------- */
   function relayout() {
     if (PREF.mode === 'scroll') {
+      // 페이지 모드에서 넣었던 인라인 스타일을 모두 해제 → CSS 스크롤 규칙 복귀
       els.content.style.columnWidth = '';
+      els.content.style.columnGap = '';
       els.content.style.transform = '';
+      els.content.style.height = '';
+      els.content.style.width = '';
+      els.content.style.maxWidth = '';
+      els.content.style.marginLeft = '';
+      els.content.style.marginRight = '';
       updateProgress();
       return;
     }
-    var stageWidth = els.stage.clientWidth;          // 무대 너비 = 한 페이지 너비
-    var contentW = Math.min(stageWidth, remToPx(getReaderWidthRem()));
-    // 컬럼 한 칸 = 본문 영역 너비. 컬럼 갭은 reader.css 의 48px.
+    // 한 페이지 너비 = 무대의 "안쪽"(패딩 제외) 너비. 보이는 영역과 정확히 일치시켜야
+    // 컬럼이 어긋나거나 글자가 잘리지 않는다.
+    var cs = getComputedStyle(els.stage);
+    var stageInner = els.stage.clientWidth
+      - (parseFloat(cs.paddingLeft) || 0)
+      - (parseFloat(cs.paddingRight) || 0);
+    // 컬럼 갭은 reader.css 의 48px.
     var gap = 48;
-    var colWidth = contentW; // 한 페이지에 한 단
+    var colWidth = stageInner; // 한 페이지에 한 단 = 보이는 영역 전체
     els.content.style.columnWidth = colWidth + 'px';
     els.content.style.columnGap = gap + 'px';
     els.content.style.width = colWidth + 'px';
-    els.content.style.marginLeft = 'auto';
-    els.content.style.marginRight = 'auto';
+    els.content.style.maxWidth = 'none';   // CSS 42rem 클램프 해제(JS 폭이 페이지 폭)
+    els.content.style.marginLeft = '0';
+    els.content.style.marginRight = '0';
+
+    // 페이지(컬럼) 높이를 줄 높이의 정수배로 스냅 → 마지막 줄이 반 잘리는 것 방지
+    snapContentHeight();
 
     state.pageStep = colWidth + gap;
     // 전체 페이지 수
@@ -156,6 +182,21 @@
     if (state.page > state.totalPages - 1) state.page = state.totalPages - 1;
     if (state.page < 0) state.page = 0;
     renderPage();
+  }
+
+  // 본문 높이를 한 줄 높이의 정수배로 맞춘다(페이지 하단 줄 잘림 방지)
+  function snapContentHeight() {
+    els.content.style.height = '';            // 먼저 CSS 기본(100%)으로 되돌려 실제 가용 높이 측정
+    var cs = getComputedStyle(els.content);
+    var lh = parseFloat(cs.lineHeight);
+    var padTop = parseFloat(cs.paddingTop) || 0;
+    var padBottom = parseFloat(cs.paddingBottom) || 0;
+    var fullH = els.content.clientHeight;     // 패딩 포함 내부 높이
+    var textH = fullH - padTop - padBottom;   // 실제 글이 들어가는 높이
+    if (lh > 0 && textH > lh) {
+      var snapped = Math.floor(textH / lh) * lh;
+      els.content.style.height = (snapped + padTop + padBottom) + 'px';
+    }
   }
 
   function getReaderWidthRem() {
@@ -294,6 +335,20 @@
       PREF.theme = b.dataset.theme;
       els.body.setAttribute('data-theme', b.dataset.theme);
       syncSettingButtons();
+    });
+  });
+
+  // 글꼴(고딕/명조) 전환 — 글꼴이 바뀌면 줄 너비/높이가 달라지므로 재계산
+  document.querySelectorAll('#seg-fontface button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      PREF.fontFace = b.dataset.fontface;
+      els.body.setAttribute('data-fontface', b.dataset.fontface);
+      syncSettingButtons();
+      // 웹폰트(명조)가 아직 로드 중이면 로드 완료 후 한 번 더 재계산
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () { requestAnimationFrame(relayout); });
+      }
+      requestAnimationFrame(relayout);
     });
   });
 

@@ -43,10 +43,10 @@
     var ctrl = e.ctrlKey || e.metaKey; // Win/Mac 모두
 
     // F12 (개발자도구)
-    if (e.keyCode === 123 || key === 'f12') {
-      e.preventDefault();
-      return false;
-    }
+    // if (e.keyCode === 123 || key === 'f12') {
+    //   e.preventDefault();
+    //   return false;
+    // }
     // Ctrl/Cmd + Shift + I / J / C  (개발자도구 / 콘솔 / 요소선택)
     if (ctrl && e.shiftKey && ['i', 'j', 'c'].indexOf(key) !== -1) {
       e.preventDefault();

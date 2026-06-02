@@ -152,6 +152,45 @@ a:hover { text-decoration: underline; }
   list-style: none;
 }
 
+/* ---- 외부(Postype) 링크 카드 ---- */
+.external-card {
+  display: block;
+  margin: 22px 0 4px;
+  padding: 16px 18px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--panel-bd);
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(70, 110, 150, 0.12);
+  color: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+.external-card:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 10px 30px rgba(70, 110, 150, 0.18);
+}
+.external-card .ext-badge {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--sky);
+  margin-bottom: 5px;
+}
+.external-card .ext-title {
+  display: block;
+  font-size: 1.16rem;
+  font-weight: 700;
+  color: var(--sky-deep);
+  margin-bottom: 3px;
+}
+.external-card .ext-desc {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
 .site-footer {
   text-align: center;
   color: var(--muted);
